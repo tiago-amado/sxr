@@ -35,7 +35,7 @@ The physical setup is ilustrated below:
 
 
 <p align="center">
-  <img width="900" height="400" src="https://github.com/tiago-amado/sxr/pics/sxr-clab_physical.png?raw=true">
+  <img width="900" height="400" src="https://github.com/tiago-amado/sxr/blob/main/pics/sxr-clab_physical.png">
 </p>
 
 
@@ -54,7 +54,7 @@ There are 3 distinct EVPN services: VPWS, MAC-VRF and IP-VRF
 
 
 <p align="center">
-  <img width="900" height="400" src="https://github.com/tiago-amado/sxr/pics/sxr-clab_logical.png?raw=true">
+  <img width="900" height="400" src="https://github.com/tiago-amado/sxr/blob/main/pics/sxr-clab_logical.png">
 </p>
 
 
