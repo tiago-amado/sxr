@@ -66,5 +66,31 @@ The setup has:
 * EVPN Services: 1_vpws, 2_mac-vrf and 3_ip-vrf
 
 
+## Test the setup
+
+Test the setup by starting an ICMP from host1 towards host2 on all interfaces:
+```bash
+ping 192.168.51.2
+ping 192.168.52.2   ## you may need to start an icmp on host 2 to trigger an arp to the EVPN
+ping 192.168.63.2   ## distint subnets on each host
+```
+
+
+To clear the arps use the following commands
+```bash
+# at both hosts
+ip -s -s neigh flush all
+
+#at both sxr:
+/tools network-instance 2_mac-vrf bridge-table mac-learning delete-all-macs
+/tools network-instance 2_mac-vrf bridge-table proxy-arp dynamic delete-all
+/tools network-instance 2_mac-vrf bridge-table mac-learning learnt-entries mac <HOST-MAC> delete-mac
+
+#view the Macs
+/show network-instance 2_mac-vrf bridge-table mac-table all
+```
+
+
+You may perform additional validations on each host and SRX node by using shows or info from state for each service.
 
 
