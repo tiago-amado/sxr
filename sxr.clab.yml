@@ -1,0 +1,63 @@
+name: sxr_test
+prefix: ""
+## FPCx 7730 SXR Beta in SRL 24.7.R2 - GA in 24.10R1
+## Only sxr1x44s and sxr1d32d => Other models in R25 and R26
+topology:
+  kinds:
+    srl:
+      image: ghcr.io/nokia/srlinux
+      license: /opt/nokia/sros/srl_r24_license.key
+    linux:
+      image: ghcr.io/srl-labs/network-multitool
+
+  nodes:
+    sxr-A:
+      kind: srl
+      type: sxr1x44s
+      startup-config: configs/sxr-A.partial.cfg
+    sxr-B:
+      kind: srl
+      type: sxr1d32d
+      startup-config: configs/sxr-B.partial.cfg
+
+    ### CLIENTS ###
+    host1:
+      kind: linux
+      exec:
+        - ip -6 address add 2002::192:168:51:1/96 dev eth1
+        - ip address add 192.168.51.1/24 dev eth1
+        - ip address add 192.168.52.1/24 dev eth2
+        - ip address add 192.168.53.1/24 dev eth3
+        - ip route add 192.168.63.0/24 via 192.168.53.254
+        #- echo 'export PS1="\h:\w\$ "' >> ~/.bashrc && source ~/.bashrc
+      group: server
+    host2:
+      kind: linux
+      exec:
+        - ip -6 address add 2002::192:168:51:2/96 dev eth1
+        - ip address add 192.168.51.2/24 dev eth1
+        - ip address add 192.168.52.2/24 dev eth2
+        - ip address add 192.168.63.2/24 dev eth3
+        - ip route add 192.168.53.0/24 via 192.168.63.254
+        #- echo 'export PS1="\h:\w\$ "' >> ~/.bashrc && source ~/.bashrc
+      group: server
+
+  links:
+    # Interconnect SXR A and B
+    - endpoints: ["sxr-A:e1-6", "sxr-B:e1-6"]
+    - endpoints: ["sxr-A:e1-7", "sxr-B:e1-7"]
+    # Loop for tests if needed
+    - endpoints: ["sxr-A:e1-8", "sxr-A:e1-9"]
+    - endpoints: ["sxr-B:e1-8", "sxr-B:e1-9"]
+    # host1
+    - endpoints: ["host1:eth1", "sxr-A:e1-1"]
+    - endpoints: ["host1:eth2", "sxr-A:e1-2"]
+    - endpoints: ["host1:eth3", "sxr-A:e1-3"]
+    - endpoints: ["host1:eth4", "sxr-A:e1-4"]
+    - endpoints: ["host1:eth5", "sxr-A:e1-5"]
+    # host2
+    - endpoints: ["host2:eth1", "sxr-B:e1-1"]
+    - endpoints: ["host2:eth2", "sxr-B:e1-2"]
+    - endpoints: ["host2:eth3", "sxr-B:e1-3"]
+    - endpoints: ["host2:eth4", "sxr-B:e1-4"]
+    - endpoints: ["host2:eth5", "sxr-B:e1-5"]
